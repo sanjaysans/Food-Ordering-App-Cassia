@@ -1,5 +1,9 @@
+import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
+import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
 import 'package:canteen_food_ordering_app/screens/login.dart';
+import 'package:canteen_food_ordering_app/screens/navigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // import 'package:foodlab/api/food_api.dart';
 // import 'package:foodlab/screens/login_signup_page.dart';
 // import 'package:foodlab/notifier/auth_notifier.dart';
@@ -14,14 +18,14 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
-    // initializeCurrentUser(authNotifier, context);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    initializeCurrentUser(authNotifier, context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
 
     return Scaffold(
       body: Container(
@@ -67,9 +71,9 @@ class _LandingPageState extends State<LandingPage> {
                 Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (BuildContext context) {
                     return 
-                    // (authNotifier.user == null)?
-                        LoginPage();
-                        // : NavigationBarPage(selectedIndex: 0);
+                    (authNotifier.user == null)?
+                        LoginPage()
+                        : NavigationBarPage(selectedIndex: 1);
                   },
                 ));
               },

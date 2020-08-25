@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:canteen_food_ordering_app/screens/landingPage.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
+import 'notifiers/authNotifier.dart';
 
 // void main() {
-//   runApp(
-//     MultiProvider(
-//       providers: [
-//         // ChangeNotifierProvider(
-//         //   create: (_) => AuthNotifier(),
-//         // ),
-//         // ChangeNotifierProvider(
-//         //   create: (_) => FoodNotifier(),
-//         // ),
-//       ],
-//       child: MyApp(),
-//     )
-//   );
+//   runApp(MyApp());
 // }
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AuthNotifier(),
+        ),
+        // ChangeNotifierProvider(
+        //   create: (_) => FoodNotifier(),
+        // ),
+      ],
+      child: MyApp(),
+    )
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override

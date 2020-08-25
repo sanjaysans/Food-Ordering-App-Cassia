@@ -1,12 +1,8 @@
-import 'dart:io';
-
 class User {
   String displayName;
   String email;
   String password;
   String uuid;
-  String profilePic;
-  File profileFile;
 
   User();
 
@@ -15,7 +11,6 @@ class User {
     email = data['email'];
     password = data['password'];
     uuid = data['uuid'];
-    profilePic = data['profilePic'];
   }
 
   Map<String, dynamic> toMap() {
@@ -24,7 +19,6 @@ class User {
       'email': email,
       'password': password,
       'uuid': uuid,
-      'profilePic': profilePic,
     };
   }
 }

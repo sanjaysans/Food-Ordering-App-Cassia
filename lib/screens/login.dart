@@ -1,10 +1,11 @@
+import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
+import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
 import 'package:canteen_food_ordering_app/screens/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:foodlab/api/food_api.dart';
-// import 'package:foodlab/notifier/auth_notifier.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -19,8 +20,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
-    // initializeCurrentUser(authNotifier, context);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    initializeCurrentUser(authNotifier, context);
     super.initState();
   }
 
@@ -39,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     _formkey.currentState.save();
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     RegExp regExp = new RegExp(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$');
     if(!regExp.hasMatch(_user.email)){
       toast("Enter a valid Email ID");
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
       toast("Password must have atleast 8 characters");
     } else {
       print("Success");
-      // login(_user, authNotifier, context);
+      login(_user, authNotifier, context);
     }
   }
 

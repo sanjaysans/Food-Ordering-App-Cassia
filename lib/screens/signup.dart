@@ -1,10 +1,11 @@
+import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
+import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
 import 'package:canteen_food_ordering_app/screens/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:foodlab/api/food_api.dart';
-// import 'package:foodlab/notifier/auth_notifier.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -20,8 +21,8 @@ class _SignupPageState extends State<SignupPage> {
   
   @override
   void initState() {
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
-    // initializeCurrentUser(authNotifier, context);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    initializeCurrentUser(authNotifier, context);
     super.initState();
   }
 
@@ -41,7 +42,7 @@ class _SignupPageState extends State<SignupPage> {
     }
     _formkey.currentState.save();
     RegExp regExp = new RegExp(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$');
-    // AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     if(_user.displayName.length < 3){
       toast("Name must have atleast 3 characters");
     } else if(!regExp.hasMatch(_user.email)){
@@ -52,7 +53,7 @@ class _SignupPageState extends State<SignupPage> {
       toast("Confirm password does'nt match your password");
     } else {
       print("Success");
-      // signUp(_user, authNotifier, context);
+      signUp(_user, authNotifier, context);
     }
   }
 
