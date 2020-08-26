@@ -1,23 +1,20 @@
 import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
-import 'package:canteen_food_ordering_app/screens/forgotPassword.dart';
-import 'package:canteen_food_ordering_app/screens/signup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+class ForgotPasswordPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   
   User _user = new User();
-  bool isSignedIn = false, showPassword = true;
 
   @override
   void initState() {
@@ -45,15 +42,13 @@ class _LoginPageState extends State<LoginPage> {
     RegExp regExp = new RegExp(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$');
     if(!regExp.hasMatch(_user.email)){
       toast("Enter a valid Email ID");
-    } else if(_user.password.length < 8){
-      toast("Password must have atleast 8 characters");
     } else {
       print("Success");
-      login(_user, authNotifier, context);
+      forgotPassword(_user, authNotifier, context);
     }
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildForgotPasswordForm() {
     return Column(
       children: <Widget>[
         SizedBox(
@@ -89,94 +84,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-        ), //EMAIL TEXT FIELD
-        SizedBox(
-          height: 20,
-        ),
-        // Password Text Field
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 40),
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(40),
-          ),
-          child: TextFormField(
-            obscureText: showPassword,
-            validator: (String value) {
-              return null;
-            },
-            onSaved: (String value) {
-              _user.password = value;
-            },
-            keyboardType: TextInputType.visiblePassword,
-            cursorColor: Color.fromRGBO(255, 63, 111, 1),
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  (showPassword) ? Icons.visibility_off : Icons.visibility,
-                  color: Color.fromRGBO(255, 63, 111, 1),
-                ), 
-                onPressed: () {
-                  setState(() {
-                    showPassword = !showPassword;
-                  });
-                }
-                ),
-              border: InputBorder.none,
-              hintText: 'Password',
-              hintStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(255, 63, 111, 1),
-              ),
-              icon: Icon(
-                Icons.lock,
-                color: Color.fromRGBO(255, 63, 111, 1),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        // Forgot Password Line
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Forgot Password?',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return ForgotPasswordPage();
-                  },
-                ));
-              },
-              child: Container(
-                child: Text(
-                  'Reset here',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
         ),
         SizedBox(
           height: 50,
         ),
-        //LOGIN BUTTON
+        //Reset Password BUTTON
         GestureDetector(
           onTap: () {
             _submitForm();
@@ -188,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: Text(
-              "Log In",
+              "Reset Password",
               style: TextStyle(
                 fontSize: 20,
                 color: Color.fromRGBO(255, 63, 111, 1),
@@ -198,40 +110,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
         SizedBox(
           height: 60,
-        ),
-        // SignUp Line
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Not a registered user?',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return SignupPage();
-                  },
-                ));
-              },
-              child: Container(
-                child: Text(
-                  'Sign Up here',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
         ),
       ],
     );
@@ -283,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Color.fromRGBO(252, 188, 126, 1),
                   ),
                 ),
-                _buildLoginForm()
+                _buildForgotPasswordForm(),
               ],
             ),
           ),

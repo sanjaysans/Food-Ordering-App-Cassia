@@ -103,21 +103,14 @@ signUp(User user, AuthNotifier authNotifier, BuildContext context) async {
       if (firebaseUser != null) {
         await firebaseUser.updateProfile(updateInfo);
         await firebaseUser.reload();
-
         print("Sign Up: $firebaseUser");
-
-        FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-
-        authNotifier.setUser(currentUser);
-
         uploadUserData(user, userDataUploaded);
-
-        await getUserDetails(authNotifier);
-
+        await FirebaseAuth.instance.signOut();
+        authNotifier.setUser(null);
         pr.hide().then((isHidden) {
           print(isHidden);
         });
-
+        toast("Verification link is sent to ${user.email}");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (BuildContext context) {
@@ -190,4 +183,24 @@ signOut(AuthNotifier authNotifier, BuildContext context) async {
       return LoginPage();
     }),
   );
+}
+
+forgotPassword(User user, AuthNotifier authNotifier, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: user.email);
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast(error.message.toString());
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  toast("Reset Email has sent successfully");
+  Navigator.pop(context);
 }

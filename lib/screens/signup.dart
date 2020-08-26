@@ -17,7 +17,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _passwordController = new TextEditingController();
 
   User _user = new User();
-  bool isSignedIn = false;
+  bool isSignedIn = false, showPassword = true, showConfirmPassword = true;
   
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _SignupPageState extends State<SignupPage> {
         // User Name Field
         Container(
           margin: EdgeInsets.symmetric(horizontal: 40),
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
@@ -100,7 +100,7 @@ class _SignupPageState extends State<SignupPage> {
         // Email Field
         Container(
           margin: EdgeInsets.symmetric(horizontal: 40),
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
@@ -134,13 +134,13 @@ class _SignupPageState extends State<SignupPage> {
         // Password Field
         Container(
           margin: EdgeInsets.symmetric(horizontal: 40),
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
           ),
           child: TextFormField(
-            obscureText: true,
+            obscureText: showPassword,
             validator: (String value) {
               return null;
             },
@@ -150,6 +150,17 @@ class _SignupPageState extends State<SignupPage> {
             keyboardType: TextInputType.visiblePassword,
             cursorColor: Color.fromRGBO(255, 63, 111, 1),
             decoration: InputDecoration(
+              suffixIcon: IconButton(
+                icon: Icon(
+                  (showPassword) ? Icons.visibility_off : Icons.visibility,
+                  color: Color.fromRGBO(255, 63, 111, 1),
+                ), 
+                onPressed: () {
+                  setState(() {
+                    showPassword = !showPassword;
+                  });
+                }
+              ),
               border: InputBorder.none,
               hintText: 'Password',
               hintStyle: TextStyle(
@@ -169,7 +180,7 @@ class _SignupPageState extends State<SignupPage> {
         // Confirm Password Field
         Container(
           margin: EdgeInsets.symmetric(horizontal: 40),
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
@@ -178,11 +189,22 @@ class _SignupPageState extends State<SignupPage> {
             validator: (String value) {
               return null;
             },
-            obscureText: true,
+            obscureText: showConfirmPassword,
             keyboardType: TextInputType.visiblePassword,
             controller: _passwordController,
             cursorColor: Color.fromRGBO(255, 63, 111, 1),
             decoration: InputDecoration(
+              suffixIcon: IconButton(
+                icon: Icon(
+                  (showConfirmPassword) ? Icons.visibility_off : Icons.visibility,
+                  color: Color.fromRGBO(255, 63, 111, 1),
+                ), 
+                onPressed: () {
+                  setState(() {
+                    showConfirmPassword = !showConfirmPassword;
+                  });
+                }
+                ),
               border: InputBorder.none,
               hintText: 'Confirm Password',
               hintStyle: TextStyle(
@@ -205,7 +227,7 @@ class _SignupPageState extends State<SignupPage> {
             _submitForm();
           },
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
@@ -289,7 +311,7 @@ class _SignupPageState extends State<SignupPage> {
               children: <Widget>[
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 60),
                     child: Text(
                       'FoodLab',
                       style: TextStyle(
