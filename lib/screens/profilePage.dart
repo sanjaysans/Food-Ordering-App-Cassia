@@ -33,6 +33,20 @@ class _ProfilePageState extends State<ProfilePage> {
         Provider.of<AuthNotifier>(context, listen: false);
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Food Lab'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.exit_to_app,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              signOutUser();
+            },
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
@@ -42,14 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(top: 30, right: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      signOutUser();
-                    },
-                    child: Icon(
-                      Icons.person_add,
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -62,16 +68,17 @@ class _ProfilePageState extends State<ProfilePage> {
             //       )
             //     : 
             Container(
-                    decoration: new BoxDecoration(
-                      color: Colors.grey.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    width: 100,
-                    child: Icon(
-                      Icons.person,
-                      size: 70,
-                    ),
-                  ),
+              alignment: Alignment.center,
+              decoration: new BoxDecoration(
+                color: Colors.grey.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              width: 100,
+              child: Icon(
+                Icons.person,
+                size: 70,
+              ),
+            ),
             SizedBox(
               height: 20,
             ),
@@ -87,7 +94,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 : Text("You don't have a user name"),
             SizedBox(
-              height: 40,
+              height: 10,
+            ),
+            // authNotifier.userDetails.bio != null
+            // ? Text(
+            //     authNotifier.userDetails.bio,
+            //     style: TextStyle(fontSize: 15),
+            //   )
+            // : 
+            Text(
+              "Balance: 0 INR",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontFamily: 'MuseoModerno',
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             GestureDetector(
               onTap: () {
@@ -98,10 +122,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 //   }),
                 // );
               },
-              child: CustomRaisedButton(buttonText: 'Edit Profile'),
+              child: CustomRaisedButton(buttonText: 'Add Money'),
             ),
             SizedBox(
-              height: 20,
+              height: 30,
+            ),
+            Text(
+              "Order History",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontFamily: 'MuseoModerno',
+              ),
+              textAlign: TextAlign.left,
             ),
             // StreamBuilder<QuerySnapshot>(
             //   stream: Firestore.instance

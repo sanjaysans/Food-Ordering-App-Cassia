@@ -24,9 +24,9 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
       extendBody: true,
       body: _children[widget.selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
-        color: Colors.white,
+        color: Color.fromRGBO(255, 63, 111, 1),
         backgroundColor: Colors.transparent,
-        buttonBackgroundColor: Colors.white,
+        buttonBackgroundColor: Color.fromRGBO(255, 63, 111, 1),
         height: 50,
         index: widget.selectedIndex,
         onTap: (index) {
@@ -38,17 +38,17 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
           Icon(
             Icons.account_circle,
             size: 26,
-            color: Colors.black,
+            color: Colors.white,
           ),
           Icon(
             Icons.home,
             size: 26,
-            color: Colors.black,
+            color: Colors.white,
           ),
           Icon(
             Icons.add_shopping_cart,
             size: 26,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ],
       ),
