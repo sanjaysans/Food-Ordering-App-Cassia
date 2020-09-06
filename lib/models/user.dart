@@ -3,6 +3,8 @@ class User {
   String email;
   String password;
   String uuid;
+  String role;
+  double balance;
 
   User();
 
@@ -11,6 +13,8 @@ class User {
     email = data['email'];
     password = data['password'];
     uuid = data['uuid'];
+    role = data['role'];
+    balance = data['balance'];
   }
 
   Map<String, dynamic> toMap() {
@@ -19,6 +23,8 @@ class User {
       'email': email,
       'password': password,
       'uuid': uuid,
+      'role': role,
+      'balance': balance,
     };
   }
 }

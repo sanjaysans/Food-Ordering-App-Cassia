@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Container(
                     padding: EdgeInsets.only(top: 60),
                     child: Text(
-                      'FoodLab',
+                      'Cassia',
                       style: TextStyle(
                         fontSize: 60,
                         fontWeight: FontWeight.bold,
@@ -276,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Text(
-                  'Think. Click. Pick',
+                  '',
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     fontSize: 17,

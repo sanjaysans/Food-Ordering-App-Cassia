@@ -112,12 +112,7 @@ signUp(User user, AuthNotifier authNotifier, BuildContext context) async {
           print(isHidden);
         });
         toast("Verification link is sent to ${user.email}");
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return LoginPage();
-          }),
-        );
+        Navigator.pop(context);
       }
     }
     pr.hide().then((isHidden) {

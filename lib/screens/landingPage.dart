@@ -47,7 +47,7 @@ class _LandingPageState extends State<LandingPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'FoodLab',
+              'Cassia',
               style: TextStyle(
                 fontSize: 60,
                 fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
             Text(
-              'Think. Click. Pick',
+              '',
               style: TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 17,

@@ -143,7 +143,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   child: Container(
                     padding: EdgeInsets.only(top: 60),
                     child: Text(
-                      'FoodLab',
+                      'Cassia',
                       style: TextStyle(
                         fontSize: 60,
                         fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                 ),
                 Text(
-                  'Think. Click. Pick',
+                  '',
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     fontSize: 17,

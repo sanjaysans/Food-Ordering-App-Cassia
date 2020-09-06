@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food Lab'),
+        title: Text('Profile'),
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -96,12 +96,16 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 10,
             ),
-            // authNotifier.userDetails.bio != null
-            // ? Text(
-            //     authNotifier.userDetails.bio,
-            //     style: TextStyle(fontSize: 15),
-            //   )
-            // : 
+            authNotifier.userDetails.balance != null
+            ? Text(
+                "Balance: ${authNotifier.userDetails.balance} INR",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontFamily: 'MuseoModerno',
+                ),
+              )
+            : 
             Text(
               "Balance: 0 INR",
               style: TextStyle(

@@ -1,6 +1,5 @@
 import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
-import 'package:canteen_food_ordering_app/screens/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
@@ -53,6 +52,8 @@ class _SignupPageState extends State<SignupPage> {
       toast("Confirm password does'nt match your password");
     } else {
       print("Success");
+      _user.role = "user";
+      _user.balance = 0.0;
       signUp(_user, authNotifier, context);
     }
   }
@@ -309,7 +310,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Container(
                     padding: EdgeInsets.only(top: 60),
                     child: Text(
-                      'FoodLab',
+                      'Cassia',
                       style: TextStyle(
                         fontSize: 60,
                         fontWeight: FontWeight.bold,
@@ -320,7 +321,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 Text(
-                  'Think. Click. Pick',
+                  '',
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     fontSize: 17,

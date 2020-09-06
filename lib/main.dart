@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:canteen_food_ordering_app/screens/landingPage.dart';
 import 'package:provider/provider.dart';
-
 import 'notifiers/authNotifier.dart';
 
 // void main() {
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Food Lab',
+      title: 'Cassia',
       theme: ThemeData(
         fontFamily: 'Montserrat',
         primaryColor: Color.fromRGBO(255, 63, 111, 1),
