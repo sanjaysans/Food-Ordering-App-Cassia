@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "992956263618",
+    "firebase_url": "https://e-canteen-ad936.firebaseio.com",
+    "project_id": "e-canteen-ad936",
+    "storage_bucket": "e-canteen-ad936.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992956263618:android:c6f8ee8ab2d31f10cc9f5b",
+        "android_client_info": {
+          "package_name": "com.example.canteen_food_ordering_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992956263618-i0dvo3v9926qmlndge05o9encajos09n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2-nOA1ZDSfKf3DPORgCnHbON4HYl2qZ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992956263618-i0dvo3v9926qmlndge05o9encajos09n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
