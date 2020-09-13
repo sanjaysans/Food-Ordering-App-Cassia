@@ -1,3 +1,4 @@
+import 'package:canteen_food_ordering_app/models/food.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
 import 'package:canteen_food_ordering_app/screens/login.dart';
@@ -147,11 +148,18 @@ uploadUserData(User user, bool userdataUpload) async {
   FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
 
   CollectionReference userRef = Firestore.instance.collection('users');
+  CollectionReference cartRef = Firestore.instance.collection('carts');
+  
   user.uuid = currentUser.uid;
   if (userDataUploadVar != true) {
     await userRef
         .document(currentUser.uid)
         .setData(user.toMap())
+        .catchError((e) => print(e))
+        .then((value) => userDataUploadVar = true);
+    await cartRef
+        .document(currentUser.uid)
+        .setData({"items": []})
         .catchError((e) => print(e))
         .then((value) => userDataUploadVar = true);
   } else {
@@ -199,4 +207,56 @@ forgotPassword(User user, AuthNotifier authNotifier, BuildContext context) async
   });
   toast("Reset Email has sent successfully");
   Navigator.pop(context);
+}
+
+addToCart(Food food, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    CollectionReference cartRef = Firestore.instance.collection('carts');
+    await cartRef
+      .document(currentUser.uid).updateData({"items": FieldValue.arrayUnion([food.toMapForCart()])})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to add to cart!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  toast("Added to cart successfully!");
+}
+
+removeFromCart(Food food, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    CollectionReference cartRef = Firestore.instance.collection('carts');
+    DocumentSnapshot data = await cartRef.document(currentUser.uid).get();
+    List<dynamic> myArray = data.data['items'];
+    myArray.removeWhere((element) => (element['item_id'] == food.id));
+    print(myArray.toString());
+    await cartRef
+      .document(currentUser.uid).updateData({'items': myArray})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to Remove from cart!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  toast("Removed from cart successfully!");
 }
