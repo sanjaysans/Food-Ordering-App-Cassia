@@ -1,5 +1,6 @@
 import 'package:canteen_food_ordering_app/apis/foodAPIs.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
+import 'package:canteen_food_ordering_app/screens/adminHome.dart';
 import 'package:canteen_food_ordering_app/screens/login.dart';
 import 'package:canteen_food_ordering_app/screens/navigationBar.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
-
+    
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -68,14 +69,21 @@ class _LandingPageState extends State<LandingPage> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(
+                (authNotifier.user == null)? Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return 
-                    (authNotifier.user == null)?
-                        LoginPage()
-                        : NavigationBarPage(selectedIndex: 1);
-                  },
-                ));
+                    return LoginPage();
+                  })) : 
+                (authNotifier.userDetails == null) ? print('wait') : 
+                  (authNotifier.userDetails.role == 'admin')? 
+                    Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return AdminHomePage();       
+                      },
+                    )):  Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return NavigationBarPage(selectedIndex: 1);       
+                      },
+                    ));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),

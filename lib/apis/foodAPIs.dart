@@ -1,6 +1,7 @@
 import 'package:canteen_food_ordering_app/models/food.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
+import 'package:canteen_food_ordering_app/screens/adminHome.dart';
 import 'package:canteen_food_ordering_app/screens/login.dart';
 import 'package:canteen_food_ordering_app/screens/navigationBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,12 +58,21 @@ login(User user, AuthNotifier authNotifier, BuildContext context) async {
         pr.hide().then((isHidden) {
           print(isHidden);
         });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return NavigationBarPage(selectedIndex: 1);
-          }),
-        );
+        if(authNotifier.userDetails.role == 'admin'){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return AdminHomePage();
+            }),
+          );
+        }else{
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return NavigationBarPage(selectedIndex: 1);
+            }),
+          );
+        }
       }
     }
   } catch (error) {
@@ -259,4 +269,76 @@ removeFromCart(Food food, BuildContext context) async {
     print(isHidden);
   });
   toast("Removed from cart successfully!");
+}
+
+addNewItem(String itemName, int price, int totalQty, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference itemRef = Firestore.instance.collection('items');
+    await itemRef
+      .document().setData({"item_name": itemName, "price": price, "total_qty": totalQty})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to add to new item!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  toast("New Item added successfully!");
+}
+
+editItem(String itemName, int price, int totalQty, BuildContext context, String id) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference itemRef = Firestore.instance.collection('items');
+    await itemRef
+      .document(id).setData({"item_name": itemName, "price": price, "total_qty": totalQty})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to edit item!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  toast("Item edited successfully!");
+}
+
+deleteItem(String id, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference itemRef = Firestore.instance.collection('items');
+    await itemRef
+      .document(id).delete()
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to edit item!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  toast("Item edited successfully!");
 }

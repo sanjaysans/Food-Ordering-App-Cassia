@@ -12,12 +12,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<String> cartIds = new List<String>();
-  
+  List<Food> _foodItems = new List<Food>();
+  String name = '';
+
   @override
   void initState() {
-    AuthNotifier authNotifier =
-        Provider.of<AuthNotifier>(context, listen: false);
-
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     getUserDetails(authNotifier);
     getCart(authNotifier.userDetails.uuid);
     super.initState();
@@ -25,46 +25,78 @@ class _HomePageState extends State<HomePage> {
   
   @override
   Widget build(BuildContext context) {
-    AuthNotifier authNotifier =
-        Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Cassia'),
       ),
-      body: 
-      SingleChildScrollView(
+      // ignore: unrelated_type_equality_checks
+      body: (authNotifier.userDetails.uuid == Null) ? Container(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Text("No Items to display"),
+      ) : userHome(context)
+    );
+  }
+
+  Widget userHome(context){
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    return SingleChildScrollView(
         physics: ScrollPhysics(),
           child: Column(
             children: <Widget>[
+              Card(
+                child: TextField(
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search), hintText: 'Search...'),
+                  onChanged: (val) {
+                    setState(() {
+                      name = val;
+                    });
+                  },
+                ),
+              ),
               StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('items').where('total_qty', isGreaterThan: 0).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData && snapshot.data.documents.length > 0) {
-                  return Container(
-                    margin: EdgeInsets.only(top: 10.0),
-                    child:ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, int index) {
-                      final item = snapshot.data.documents[index];
-                      Food data = new Food(item.documentID, item['item_name'], item['total_qty'], item['price']);
-                      return ListTile(
-                        title: Text(data.itemName ?? ''),
-                        subtitle: Text('cost: ${data.price.toString()}'),
-                        trailing: IconButton(
-                          icon: cartIds.contains(data.id)? new Icon(Icons.remove):new Icon(Icons.add),
-                          onPressed: () async{
-                            cartIds.contains(data.id)? 
-                            await removeFromCart(data, context) : await addToCart(data, context);
-                            setState(() {
-                              getCart(authNotifier.userDetails.uuid);
-                            });
-                          },
-                        )
-                      );
-                    }),
-                  );
+                if (snapshot.hasData && snapshot.data.documents.length > 0 ) {
+                  _foodItems = new List<Food>();
+                  snapshot.data.documents.forEach((item) {
+                    _foodItems.add(Food(item.documentID, item['item_name'], item['total_qty'], item['price']));
+                  });
+                  List<Food> _suggestionList = (name == '' || name == null) ? _foodItems
+                    : _foodItems.where((element) => element.itemName.toLowerCase().contains(name.toLowerCase())).toList();
+                  if(_suggestionList.length > 0){
+                    return Container(
+                      margin: EdgeInsets.only(top: 10.0),
+                      child:ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _suggestionList.length,
+                        itemBuilder: (context, int i) {
+                        return ListTile(
+                          title: Text(_suggestionList[i].itemName ?? ''),
+                          subtitle: Text('cost: ${_suggestionList[i].price.toString()}'),
+                          trailing: IconButton(
+                            icon: cartIds.contains(_suggestionList[i].id)? new Icon(Icons.remove):new Icon(Icons.add),
+                            onPressed: () async{
+                              cartIds.contains(_suggestionList[i].id)? 
+                              await removeFromCart(_suggestionList[i], context) : await addToCart(_suggestionList[i], context);
+                              setState(() {
+                                getCart(authNotifier.userDetails.uuid);
+                              });
+                            },
+                          )
+                        );
+                      }),
+                    );
+                  } else {
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text("No Items to display"),
+                    );
+                  }
                 } else {
                   return Container(
                     padding: EdgeInsets.symmetric(vertical: 20),
@@ -76,8 +108,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   void getCart(String uuid) async{
