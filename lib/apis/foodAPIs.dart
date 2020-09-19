@@ -375,11 +375,6 @@ editCartItem(String itemId, int count, BuildContext context) async {
   pr.hide().then((isHidden) {
     print(isHidden);
   });
-  // Navigator.pushReplacement(context, MaterialPageRoute(
-  //   builder: (BuildContext context) {
-  //     return NavigationBarPage(selectedIndex: 2);       
-  //   },
-  // ));
   toast("Cart updated successfully!");
 }
 
