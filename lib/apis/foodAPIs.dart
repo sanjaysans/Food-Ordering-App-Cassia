@@ -169,7 +169,7 @@ uploadUserData(User user, bool userdataUpload) async {
         .then((value) => userDataUploadVar = true);
     await cartRef
         .document(currentUser.uid)
-        .setData({"items": []})
+        .setData({})
         .catchError((e) => print(e))
         .then((value) => userDataUploadVar = true);
   } else {
@@ -225,8 +225,16 @@ addToCart(Food food, BuildContext context) async {
   try {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
     CollectionReference cartRef = Firestore.instance.collection('carts');
+    QuerySnapshot data = await cartRef.document(currentUser.uid).collection('items').getDocuments();
+    if(data.documents.length >= 10) {
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
+      toast("Cart cannot have more than 10 times!");
+      return;
+    }
     await cartRef
-      .document(currentUser.uid).updateData({"items": FieldValue.arrayUnion([food.toMapForCart()])})
+      .document(currentUser.uid).collection('items').document(food.id).setData({"count": 1})
       .catchError((e) => print(e))
       .then((value) => print("Success"));
   } catch (error) {
@@ -249,12 +257,8 @@ removeFromCart(Food food, BuildContext context) async {
   try {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
     CollectionReference cartRef = Firestore.instance.collection('carts');
-    DocumentSnapshot data = await cartRef.document(currentUser.uid).get();
-    List<dynamic> myArray = data.data['items'];
-    myArray.removeWhere((element) => (element['item_id'] == food.id));
-    print(myArray.toString());
     await cartRef
-      .document(currentUser.uid).updateData({'items': myArray})
+      .document(currentUser.uid).collection('items').document(food.id).delete()
       .catchError((e) => print(e))
       .then((value) => print("Success"));
   } catch (error) {
@@ -342,3 +346,65 @@ deleteItem(String id, BuildContext context) async {
   Navigator.pop(context);
   toast("Item edited successfully!");
 }
+
+editCartItem(String itemId, int count, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    CollectionReference cartRef = Firestore.instance.collection('carts');
+    if(count <= 0){
+      await cartRef
+      .document(currentUser.uid).collection('items').document(itemId).delete()
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+    }else{
+      await cartRef
+        .document(currentUser.uid).collection('items').document(itemId).updateData({"count": count})
+        .catchError((e) => print(e))
+        .then((value) => print("Success"));
+    }
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to update Cart!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  toast("Cart updated successfully!");
+}
+
+addMoney(int amount, BuildContext context, String id) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference userRef = Firestore.instance.collection('users');
+    await userRef
+      .document(id).updateData({'balance': FieldValue.increment(amount)})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to add money!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (BuildContext context) {
+      return NavigationBarPage(selectedIndex: 1);
+    }),
+  );
+  toast("Money added successfully!");
+}
+

@@ -46,6 +46,10 @@ class _SignupPageState extends State<SignupPage> {
       toast("Name must have atleast 3 characters");
     } else if(!regExp.hasMatch(_user.email)){
       toast("Enter a valid Email ID");
+    } else if(_user.phone.length != 10){
+      toast("Contact number length must be 10");
+    } else if(int.tryParse(_user.phone) == null){
+      toast("Contact number must be a number");
     } else if(_user.password.length < 8){
       toast("Password must have atleast 8 characters");
     } else if(_passwordController.text.toString() != _user.password){
@@ -124,6 +128,40 @@ class _SignupPageState extends State<SignupPage> {
               ),
               icon: Icon(
                 Icons.email,
+                color: Color.fromRGBO(255, 63, 111, 1),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        //Phone Number Field
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 40),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: TextFormField(
+            validator: (String value) {
+              return null;
+            },
+            onSaved: (String value) {
+              _user.phone = value;
+            },
+            keyboardType: TextInputType.phone,
+            cursorColor: Color.fromRGBO(255, 63, 111, 1),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Contact Number',
+              hintStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(255, 63, 111, 1),
+              ),
+              icon: Icon(
+                Icons.phone,
                 color: Color.fromRGBO(255, 63, 111, 1),
               ),
             ),

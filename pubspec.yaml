@@ -38,7 +38,8 @@ dependencies:
   path: ^1.6.4
   progress_dialog: ^1.2.4
   curved_navigation_bar: ^0.3.3
-
+  razorpay_flutter: ^1.2.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

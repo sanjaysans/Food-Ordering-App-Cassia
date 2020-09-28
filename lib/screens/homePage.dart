@@ -113,10 +113,10 @@ class _HomePageState extends State<HomePage> {
 
   void getCart(String uuid) async{
     List<String> ids = new List<String>();
-    DocumentSnapshot snapshot = await Firestore.instance.collection('carts').document(uuid).get();
-    var data = snapshot.data['items'];
+    QuerySnapshot snapshot = await Firestore.instance.collection('carts').document(uuid).collection('items').getDocuments();
+    var data = snapshot.documents;
     for(var i=0; i<data.length; i++){
-      ids.add(data[i]['item_id']);
+      ids.add(data[i].documentID);
     }
     setState(() {
       cartIds = ids;
