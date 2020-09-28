@@ -378,3 +378,33 @@ editCartItem(String itemId, int count, BuildContext context) async {
   toast("Cart updated successfully!");
 }
 
+addMoney(int amount, BuildContext context, String id) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference userRef = Firestore.instance.collection('users');
+    await userRef
+      .document(id).updateData({'balance': FieldValue.increment(amount)})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to add money!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (BuildContext context) {
+      return NavigationBarPage(selectedIndex: 1);
+    }),
+  );
+  toast("Money added successfully!");
+}
+

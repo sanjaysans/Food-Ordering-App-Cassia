@@ -3,6 +3,9 @@ import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
 import 'package:canteen_food_ordering_app/widgets/customRaisedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,6 +13,11 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  final _formKey = GlobalKey<FormState>();
+  Razorpay _razorpay;
+  int money = 0;
+
   signOutUser() {
     AuthNotifier authNotifier =
         Provider.of<AuthNotifier>(context, listen: false);
@@ -20,18 +28,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    AuthNotifier authNotifier =
-        Provider.of<AuthNotifier>(context, listen: false);
-
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
     getUserDetails(authNotifier);
     super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthNotifier authNotifier =
-        Provider.of<AuthNotifier>(context, listen: false);
-
+    AuthNotifier authNotifier =Provider.of<AuthNotifier>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -59,14 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            // authNotifier.userDetails.profilePic != null
-            //     ? CircleAvatar(
-            //         radius: 40.0,
-            //         backgroundImage:
-            //             NetworkImage(authNotifier.userDetails.profilePic),
-            //         backgroundColor: Colors.transparent,
-            //       )
-            //     : 
             Container(
               alignment: Alignment.center,
               decoration: new BoxDecoration(
@@ -118,13 +124,14 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 20,
             ),
             GestureDetector(
-              onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (BuildContext context) {
-                //     return EditProfile();
-                //   }),
-                // );
+              onTap: (){
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return popupForm(context);
+                  }
+                );
               },
               child: CustomRaisedButton(buttonText: 'Add Money'),
             ),
@@ -140,73 +147,121 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               textAlign: TextAlign.left,
             ),
-            // StreamBuilder<QuerySnapshot>(
-            //   stream: Firestore.instance
-            //       .collection('foods')
-            //       .where('userUuidOfPost',
-            //           isEqualTo: authNotifier.userDetails.uuid)
-            //       .snapshots(),
-            //   builder: (context, snapshot) {
-            //     if (snapshot.hasData && snapshot.data.documents.length > 0) {
-            //       return Padding(
-            //         padding: EdgeInsets.symmetric(horizontal: 20),
-            //         child: GridView.builder(
-            //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //               crossAxisCount: 3),
-            //           shrinkWrap: true,
-            //           physics: NeverScrollableScrollPhysics(),
-            //           itemCount: snapshot.data.documents.length,
-            //           itemBuilder: (context, index) {
-            //             return Padding(
-            //               padding:
-            //                   EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            //               child: GestureDetector(
-            //                 child: ClipRRect(
-            //                   borderRadius: BorderRadius.circular(15),
-            //                   child: Container(
-            //                     child: Image.network(
-            //                       snapshot.data.documents[index]['img'],
-            //                       fit: BoxFit.cover,
-            //                     ),
-            //                   ),
-            //                 ),
-            //                 onTap: () {
-            //                   Navigator.push(
-            //                     context,
-            //                     MaterialPageRoute(
-            //                       builder: (BuildContext context) {
-            //                         return FoodDetailPage(
-            //                           imgUrl: snapshot.data.documents[index]
-            //                               ['img'],
-            //                           imageName: snapshot.data.documents[index]
-            //                               ['name'],
-            //                           imageCaption: snapshot
-            //                               .data.documents[index]['caption'],
-            //                           createdTimeOfPost: snapshot
-            //                               .data.documents[index]['createdAt']
-            //                               .toDate(),
-            //                         );
-            //                       },
-            //                     ),
-            //                   );
-            //                 },
-            //               ),
-            //             );
-            //           },
-            //         ),
-            //       );
-            //     } else {
-            //       return Container(
-            //         padding: EdgeInsets.symmetric(vertical: 20),
-            //         width: MediaQuery.of(context).size.width * 0.6,
-            //         child: Image.asset('images/undraw_cooking_lyxy.png'),
-            //       );
-            //     }
-            //   },
-            // ),
           ],
         ),
       ),
     );
+  }
+
+  Widget popupForm(context){
+    int amount = 0;
+    return AlertDialog(
+      content: Stack(
+        overflow: Overflow.visible,
+        children: <Widget>[
+          Form(
+            key: _formKey,
+            autovalidate: true,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("Deposit Money", style: TextStyle(
+                    color: Color.fromRGBO(255, 63, 111, 1),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if(int.tryParse(value) == null) return "Not a valid integer";
+                      else if(int.parse(value) < 100) return "Minimum Deposit is 100 INR";
+                      else if(int.parse(value) > 1000) return "Maximum Deposit is 1000 INR";
+                      else return null;
+                    },
+                    keyboardType: TextInputType.numberWithOptions(),
+                    onSaved: (String value) {
+                      amount = int.parse(value);
+                    },
+                    cursorColor: Color.fromRGBO(255, 63, 111, 1),
+                    decoration: InputDecoration(
+                      hintText: 'Money in INR',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(255, 63, 111, 1),
+                      ),
+                      icon: Icon(
+                        Icons.attach_money,
+                        color: Color.fromRGBO(255, 63, 111, 1),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        return openCheckout(amount);
+                      }
+                    },
+                    child: CustomRaisedButton(buttonText: 'Add Money'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      )
+    );
+  }
+
+  void openCheckout(int amount) async {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    money = amount;
+    var options = {
+      'key': 'rzp_test_D5ZAPbZuM494Pw',
+      'amount': money*100,
+      'name': authNotifier.userDetails.displayName,
+      'description': "${authNotifier.userDetails.uuid} - ${DateTime.now()}",
+      'prefill': {'contact': authNotifier.userDetails.phone, 'email': authNotifier.userDetails.email},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  void toast(String data){
+    Fluttertoast.showToast(
+      msg: data,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.grey,
+      textColor: Colors.white
+    );
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    addMoney(money, context, authNotifier.userDetails.uuid);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    toast("ERROR: " + response.code.toString() + " - " + response.message);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    toast("EXTERNAL_WALLET: " + response.walletName);
+    Navigator.pop(context);
   }
 }
