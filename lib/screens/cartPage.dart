@@ -137,7 +137,9 @@ class _CartPageState extends State<CartPage> {
                     height: 40,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showAlertDialog(context, "Total ($itemsCount items): $sum INR");
+                    },
                     child: CustomRaisedButton(buttonText: 'Proceed to buy'),
                   ),
                   SizedBox(
@@ -160,6 +162,42 @@ class _CartPageState extends State<CartPage> {
             child: Text("No Items to display"),
           );
         }
+      },
+    );
+  }
+
+  showAlertDialog(BuildContext context, String data) {
+
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Place Order"),
+      onPressed:  (){
+        placeOrder(context, sum);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Proceed to checkout?"),
+      content: Text(data),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return alert;
       },
     );
   }
