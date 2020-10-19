@@ -1,3 +1,4 @@
+import 'package:canteen_food_ordering_app/models/cart.dart';
 import 'package:canteen_food_ordering_app/models/food.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
@@ -408,3 +409,114 @@ addMoney(int amount, BuildContext context, String id) async {
   toast("Money added successfully!");
 }
 
+placeOrder(BuildContext context, double total) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    // Initiaization
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    CollectionReference cartRef = Firestore.instance.collection('carts');
+    CollectionReference orderRef = Firestore.instance.collection('orders');
+    CollectionReference itemRef = Firestore.instance.collection('items');
+    CollectionReference userRef = Firestore.instance.collection('users');
+
+    List<String> foodIds = new List<String>();
+    Map<String, int> count = new Map<String, int>();
+    List<dynamic> _cartItems = new List<dynamic>();
+
+    // Checking user balance
+    DocumentSnapshot userData = await userRef.document(currentUser.uid).get();
+    if(userData.data['balance'] < total){
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
+      toast("You dont have succifient balance to place this order!");
+      return;
+    }
+
+    // Getting all cart items of the user
+    QuerySnapshot data = await cartRef.document(currentUser.uid).collection('items').getDocuments();
+    data.documents.forEach((item) {
+      foodIds.add(item.documentID);
+      count[item.documentID] = item.data['count'];
+    });
+
+    // Checking for item availability
+    QuerySnapshot snap = await itemRef.where(FieldPath.documentId, whereIn: foodIds).getDocuments();
+    for (var i = 0; i < snap.documents.length; i++) {
+      if(snap.documents[i].data['total_qty'] < count[snap.documents[i].documentID]){
+        pr.hide().then((isHidden) {
+          print(isHidden);
+        });
+        print("not");
+        toast("Item: ${snap.documents[i].data['item_name']} has QTY: ${snap.documents[i].data['total_qty']} only. Reduce/Remove the item.");
+        return;
+      }
+    }
+
+    // Creating cart items array
+    snap.documents.forEach((item) {
+      _cartItems.add({
+        "item_id": item.documentID,
+        "count": count[item.documentID],
+        "item_name": item.data['item_name'],
+        "price": item.data['price']
+      });
+    });
+    
+    // Creating a transaction
+    Firestore.instance.runTransaction((Transaction transaction) async {
+
+        // Update the item count in items table
+        for (var i = 0; i < snap.documents.length; i++) {
+          transaction.update(snap.documents[i].reference, {"total_qty": snap.documents[i].data["total_qty"] - count[snap.documents[i].documentID]});
+        }
+
+        // Deduct amount from user
+        await userRef.document(currentUser.uid).updateData({'balance': FieldValue.increment(-1*total)});
+
+        // Place a new order
+        await orderRef
+          .document()
+          .setData({
+            "items": _cartItems, 
+            "is_delivered": false, 
+            "total": total, 
+            "placed_at": DateTime.now(), 
+            "placed_by": currentUser.uid
+          });
+        
+        // Empty cart
+        for (var i = 0; i < data.documents.length; i++) {
+          transaction.delete(data.documents[i].reference);
+        }
+        return;
+    }).then((value) {
+      // Successfull transaction
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
+      Navigator.pop(context);
+      toast("New Item added successfully!");
+    }).catchError((err){
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
+      toast("Failed to place order!");
+      print(err);
+    return;
+  });
+  // print("thappu");
+  // pr.hide().then((isHidden) {
+  //     print(isHidden);
+  //   });
+  // toast("New Item added successfully!");
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to place order!");
+    print(error);
+    return;
+  }
+}
