@@ -1,4 +1,3 @@
-import 'package:canteen_food_ordering_app/models/cart.dart';
 import 'package:canteen_food_ordering_app/models/food.dart';
 import 'package:canteen_food_ordering_app/models/user.dart';
 import 'package:canteen_food_ordering_app/notifiers/authNotifier.dart';
@@ -469,7 +468,7 @@ placeOrder(BuildContext context, double total) async {
 
         // Update the item count in items table
         for (var i = 0; i < snap.documents.length; i++) {
-          transaction.update(snap.documents[i].reference, {"total_qty": snap.documents[i].data["total_qty"] - count[snap.documents[i].documentID]});
+          await transaction.update(snap.documents[i].reference, {"total_qty": snap.documents[i].data["total_qty"] - count[snap.documents[i].documentID]});
         }
 
         // Deduct amount from user
@@ -488,7 +487,7 @@ placeOrder(BuildContext context, double total) async {
         
         // Empty cart
         for (var i = 0; i < data.documents.length; i++) {
-          transaction.delete(data.documents[i].reference);
+          await transaction.delete(data.documents[i].reference);
         }
         return;
     }).then((value) {
@@ -497,7 +496,7 @@ placeOrder(BuildContext context, double total) async {
         print(isHidden);
       });
       Navigator.pop(context);
-      toast("New Item added successfully!");
+      toast("Order Placed Successfully!");
     }).catchError((err){
       pr.hide().then((isHidden) {
         print(isHidden);
@@ -506,11 +505,6 @@ placeOrder(BuildContext context, double total) async {
       print(err);
     return;
   });
-  // print("thappu");
-  // pr.hide().then((isHidden) {
-  //     print(isHidden);
-  //   });
-  // toast("New Item added successfully!");
   } catch (error) {
     pr.hide().then((isHidden) {
       print(isHidden);
@@ -519,4 +513,28 @@ placeOrder(BuildContext context, double total) async {
     print(error);
     return;
   }
+}
+
+orderReceived(String id, BuildContext context) async {
+  pr = new ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+  pr.show();
+  try {
+    CollectionReference ordersRef = Firestore.instance.collection('orders');
+    await ordersRef
+      .document(id).updateData({'is_delivered': true})
+      .catchError((e) => print(e))
+      .then((value) => print("Success"));
+  } catch (error) {
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    toast("Failed to mark as received!");
+    print(error);
+    return;
+  }
+  pr.hide().then((isHidden) {
+    print(isHidden);
+  });
+  Navigator.pop(context);
+  toast("Order received successfully!");
 }
