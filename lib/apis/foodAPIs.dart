@@ -464,7 +464,7 @@ placeOrder(BuildContext context, double total) async {
     });
     
     // Creating a transaction
-    Firestore.instance.runTransaction((Transaction transaction) async {
+    await Firestore.instance.runTransaction((Transaction transaction) async {
 
         // Update the item count in items table
         for (var i = 0; i < snap.documents.length; i++) {
@@ -489,26 +489,27 @@ placeOrder(BuildContext context, double total) async {
         for (var i = 0; i < data.documents.length; i++) {
           await transaction.delete(data.documents[i].reference);
         }
-        return;
-    }).then((value) {
-      // Successfull transaction
-      pr.hide().then((isHidden) {
-        print(isHidden);
-      });
-      Navigator.pop(context);
-      toast("Order Placed Successfully!");
-    }).catchError((err){
-      pr.hide().then((isHidden) {
-        print(isHidden);
-      });
-      toast("Failed to place order!");
-      print(err);
-    return;
-  });
+        print("in in");
+        // return;
+    });
+    
+    // Successfull transaction
+    pr.hide().then((isHidden) {
+      print(isHidden);
+    });
+    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) {
+        return NavigationBarPage(selectedIndex: 1);
+      }),
+    );
+    toast("Order Placed Successfully!");
   } catch (error) {
     pr.hide().then((isHidden) {
       print(isHidden);
     });
+    Navigator.pop(context);
     toast("Failed to place order!");
     print(error);
     return;
