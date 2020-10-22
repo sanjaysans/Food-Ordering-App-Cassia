@@ -10,20 +10,41 @@ The existing method of ordering food involves standing in a queue in order to pu
 
 ## Screenshots
 
+## Login & Signup
 <div>
-<img src="images/landing.png" alt="phone image" width="200px" />
-<img src="images/login.png" alt="phone image" width="200px" />
-<img src="images/signup.png" alt="phone image" width="200px" />
-<img src="images/resetpw.png" alt="phone image" width="200px" />
-<img src="images/home.png" alt="phone image" width="200px" />
-<img src="images/profile.png" alt="phone image" width="200px" />
-<img src="images/addmoney.png" alt="phone image" width="200px" />
-<img src="images/payment.png" alt="phone image" width="200px" />
-<img src="images/cart.png" alt="phone image" width="200px" />
-<img src="images/confirmorder.png" alt="phone image" width="200px" />
-<img src="images/placeorder.png" alt="phone image" width="200px" />
-<img src="images/pendingorder.png" alt="phone image" width="200px" />
-<img src="images/deliveredorder.png" alt="phone image" width="200px" />
+<img src="images/landing.png" alt="landing image" width="200px" />
+<img src="images/login.png" alt="login image" width="200px" />
+<img src="images/signup.png" alt="signup image" width="200px" />
+<img src="images/resetpw.png" alt="reset password image" width="200px" />
+</div>
+
+## Place an order
+<div>
+<img src="images/home.png" alt="home image" width="200px" />
+<img src="images/cart.png" alt="cart image" width="200px" />
+<img src="images/confirmorder.png" alt="confirm order image" width="200px" />
+<img src="images/placeorder.png" alt="place order image" width="200px" />
+</div>
+
+## Order Details
+<div>
+<img src="images/profile.png" alt="profile image" width="200px" />
+<img src="images/pendingorder.png" alt="pending order image" width="200px" />
+<img src="images/deliveredorder.png" alt="delivered order image" width="200px" />
+</div>
+
+## Payment & Wallet 
+<div>
+<img src="images/addmoney.png" alt="add money image" width="200px" />
+<img src="images/payment.png" alt="payment image" width="200px" />
+</div>
+
+## Admin Features
+<div>
+<img src="images/adminhome.png" alt="admin home image" width="200px" />
+<img src="images/newitem.png" alt="new item image" width="200px" />
+<img src="images/edititem.png" alt="edit item image" width="200px" />
+<img src="images/deleteorempty.png" alt="delete/empty image" width="200px" />
 </div>
 
 ## Tools Used
